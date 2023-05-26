@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Province in Indonesia</title>
+</head>
+
+<body>
+    Data Daerah di Indonesia <br>
+    Provinsi : <Select id="prov"></Select>
+    <br>
+    Kabupaten : <select id="kab"></select>
+    <br>
+    Kecamatan : <select id="kecamatan"></select>
+    <br>
+    Kelurahan : <div>
+        <select  id="kelurahan"></select>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            let urlprovinsi = 'http://dev.farizdotid.com/api/daerahindonesia/provinsi';
+            $.get(urlprovinsi, function (data, status) {
+                // console.log(data);
+
+                for (i = 0; i < data.provinsi.length; i++) {
+                    var opt = '<option value=' + data.provinsi[i].id + ">" + data.provinsi[i].nama + "</option>"
+                    $('#prov').append(opt);
+                }
+            })
+
+            $('#prov').change(function () {
+                var id_prov = $('#prov').val();
+                var urlkab = 'http://dev.farizdotid.com/api/daerahindonesia/kota?id_provinsi=' + id_prov;
+                $('#kab').empty()
+
+                $.get(urlkab, function (data, status) {
+                    console.log(data);
+                    for (i = 0; i < data.kota_kabupaten.length; i++) {
+                        var opy = "<option value=" + data.kota_kabupaten[i].id + ">" + data.kota_kabupaten[i].nama + "</option>"
+                        $('#kab').append(opy);
+                    }
+                })
+            })
+            $('#kab').change(function () {
+                var id_kabupatenkota = $('#kab').val();
+                var urlkec = 'https://dev.farizdotid.com/api/daerahindonesia/kecamatan?id_kota=' + id_kabupatenkota;
+                $('#kecamatan').empty();
+
+                $.get(urlkec, function (data, status) {
+                    for (i = 0; i < data.kecamatan.length; i++) {
+                        var opt = '<option value = ' + data.kecamatan[i].id + '>' + data.kecamatan[i].nama + '</option>';
+                        $('#kecamatan').append(opt);
+                    }
+                })
+            })
+
+            $('#kecamatan').change(function () {
+                var id_kecamatan = $('#kecamatan').val();
+                var urlkel = 'https://dev.farizdotid.com/api/daerahindonesia/kelurahan?id_kecamatan=' + id_kecamatan;
+                $('#kelurahan').empty();
+
+                $.get(urlkel, function (data, status) {
+                    for (i = 0; i < data.kelurahan.length; i++) {
+                        var opt = '<option value = ' + data.kelurahan[i].id + '>' + data.kelurahan[i].nama + '</option>';
+                        $('#kelurahan').append(opt);
+                    }
+                })
+            });
+
+        });
+    </script>
+</body>
+</html>
